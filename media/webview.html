@@ -12,15 +12,18 @@
 </head>
 <body>
   <div class="bar">
+    <button id="btnReload">🔄</button>
     <input id="addr" type="text" value="http://localhost:5173/" />
     <button id="go">Go</button>
-    <button id="btnConsole">Console</button>
+    <button id="btnConsole">💬Console</button>
   </div>
   <div class="content">
     <div class="view-wrap">
       <!-- <div class="hint">Some websites may block embedding in iframes.</div> -->
       <iframe id="view" src="http://localhost:5173/"></iframe>
     </div>
+    <div class="panel-resizer" id="panelResizer" aria-hidden="true"></div>
+    <div class="drag-overlay" id="dragOverlay" hidden aria-hidden="true"></div>
     <aside class="panel" id="logPanel" aria-label="Logs">
       <div class="panel-header">
         <span>Console</span>

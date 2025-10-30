@@ -1,11 +1,16 @@
 (function () {
   const input = document.getElementById('addr');
   const btn = document.getElementById('go');
+  const btnReload = document.getElementById('btnReload');
   const frame = document.getElementById('view');
   const hint = document.querySelector('.hint');
   const logsEl = document.getElementById('logs');
   const clearBtn = document.getElementById('clear');
   const autoEl = document.getElementById('autoscroll');
+  const panel = document.getElementById('logPanel');
+  const resizer = document.getElementById('panelResizer');
+  const content = document.querySelector('.content');
+  const overlay = document.getElementById('dragOverlay');
 
   let vscode;
   try {
@@ -121,13 +126,81 @@
     if (e.key === 'Enter') {
       e.preventDefault();
       navigate();
-      if (vscode) vscode.postMessage({ type: 'info', text: `Enter pressed. Navigating to ${input.value}` });
     }
   });
 
   clearBtn?.addEventListener('click', () => {
     if (logsEl) logsEl.innerHTML = '';
   });
+
+  btnReload.addEventListener('click', () => {
+    frame.src = frame.src;
+  });
+
+  // Panel resize: robust with Pointer Events + overlay to avoid iframe capturing
+  if (panel && resizer && content && overlay) {
+    let dragging = false;
+    let startX = 0;
+    let startWidth = 0;
+    let activePointerId = -1;
+
+    const minWidth = 200; // px
+    const computeMax = () => Math.max(minWidth, Math.floor((content.clientWidth || window.innerWidth) * 0.6));
+
+    const onMove = (e) => {
+      if (!dragging) return;
+      const clientX = e.clientX ?? 0;
+      const maxWidth = computeMax();
+      const dx = startX - clientX;
+      let next = startWidth + dx;
+      if (next < minWidth) next = minWidth;
+      if (next > maxWidth) next = maxWidth;
+      panel.style.width = next + 'px';
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const endDrag = () => {
+      if (!dragging) return;
+      dragging = false;
+      activePointerId = -1;
+      document.body.classList.remove('resizing');
+      overlay.hidden = true;
+      window.removeEventListener('pointermove', onMove, true);
+      window.removeEventListener('pointerup', onUp, true);
+    };
+
+    const onUp = (e) => {
+      if (e.pointerId === activePointerId || activePointerId === -1) {
+        try { resizer.releasePointerCapture(e.pointerId); } catch {}
+        endDrag();
+      }
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    resizer.addEventListener('pointerdown', (e) => {
+      dragging = true;
+      activePointerId = e.pointerId;
+      startX = e.clientX || 0;
+      startWidth = panel.getBoundingClientRect().width;
+      document.body.classList.add('resizing');
+      overlay.hidden = false; // block iframe from stealing events
+      try { resizer.setPointerCapture(e.pointerId); } catch {}
+      window.addEventListener('pointermove', onMove, true);
+      window.addEventListener('pointerup', onUp, true);
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    resizer.addEventListener('lostpointercapture', endDrag);
+    resizer.addEventListener('pointercancel', endDrag);
+
+    // Double-click to reset
+    resizer.addEventListener('dblclick', () => {
+      panel.style.width = '360px';
+    });
+  }
 
   // Attach relay to current iframe and feed into panel
   const detachRelay = attachIframeConsoleRelay({
