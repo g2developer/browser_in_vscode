@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; img-src %CSP_SOURCE% https: data:; script-src 'nonce-%NONCE%'; style-src %CSP_SOURCE% 'unsafe-inline'; frame-src https: http:; connect-src https: http:;">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Browser in VS Code</title>
+  <link rel="stylesheet" href="%STYLE_URI%">
+</head>
+<body>
+  <div class="bar">
+    <input id="addr" type="text" value="http://localhost:5173/" />
+    <button id="go">Go</button>
+    <button id="btnConsole">Console</button>
+  </div>
+  <div class="content">
+    <div class="view-wrap">
+      <!-- <div class="hint">Some websites may block embedding in iframes.</div> -->
+      <iframe id="view" src="http://localhost:5173/"></iframe>
+    </div>
+    <aside class="panel" id="logPanel" aria-label="Logs">
+      <div class="panel-header">
+        <span>Console</span>
+        <div class="spacer"></div>
+        <label class="auto">
+          <input type="checkbox" id="autoscroll" checked /> Auto
+        </label>
+        <button id="clear" title="Clear logs">Clear</button>
+      </div>
+      <div class="logs" id="logs" role="log" aria-live="polite"></div>
+    </aside>
+  </div>
+  <script nonce="%NONCE%" src="%SCRIPT_URI%"></script>
+</body>
+</html>

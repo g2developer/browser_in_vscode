@@ -1,0 +1,22 @@
+body { padding: 0; margin: 0; font-family: sans-serif; }
+.bar { display: flex; gap: 8px; padding: 8px; background: #1e1e1e; color: #ccc; align-items: center; }
+.bar input { flex: 1; padding: 6px 8px; border-radius: 4px; border: 1px solid #444; background: #252526; color: #eee; }
+.bar button { padding: 6px 10px; border-radius: 4px; border: 1px solid #444; background: #333; color: #eee; cursor: pointer; }
+.content { display: flex; height: calc(100vh - 48px); }
+.view-wrap { flex: 1; min-width: 0; }
+iframe { width: 100%; height: 100%; border: 0; }
+.hint { padding: 6px 10px; font-size: 12px; color: #999; }
+
+/* Right panel */
+.panel { width: 360px; max-width: 60vw; border-left: 1px solid #2a2a2a; background: #1e1e1e; color: #ccc; display: flex; flex-direction: column; }
+.panel-header { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border-bottom: 1px solid #2a2a2a; }
+.panel-header .spacer { flex: 1; }
+.panel-header button { padding: 4px 8px; border-radius: 4px; border: 1px solid #444; background: #333; color: #eee; cursor: pointer; }
+.panel-header label { display: inline-flex; align-items: center; gap: 4px; font-size: 12px; color: #aaa; }
+.logs { flex: 1; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, 'Courier New', monospace; font-size: 12px; padding: 8px; }
+.log { white-space: pre-wrap; margin: 0 0 4px; }
+.log .meta { color: #888; }
+.log.log { color: #ddd; }
+.log.info { color: #8cd0ff; }
+.log.warn { color: #ffdd88; }
+.log.error { color: #ff8c8c; }
