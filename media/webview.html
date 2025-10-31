@@ -22,19 +22,21 @@
       <!-- <div class="hint">Some websites may block embedding in iframes.</div> -->
       <iframe id="view" src="http://localhost:5173/"></iframe>
     </div>
-    <div class="panel-resizer" id="panelResizer" aria-hidden="true"></div>
+    <div class="console-wrap" id="consoleWrap" hidden>
+      <div class="panel-resizer" id="panelResizer" aria-hidden="true"></div>
+      <aside class="panel" id="logPanel" aria-label="Logs">
+        <div class="panel-header">
+          <span>Console</span>
+          <div class="spacer"></div>
+          <label class="auto">
+            <input type="checkbox" id="autoscroll" checked /> Auto
+          </label>
+          <button id="clear" title="Clear logs">Clear</button>
+        </div>
+        <div class="logs" id="logs" role="log" aria-live="polite"></div>
+      </aside>
+    </div>
     <div class="drag-overlay" id="dragOverlay" hidden aria-hidden="true"></div>
-    <aside class="panel" id="logPanel" aria-label="Logs">
-      <div class="panel-header">
-        <span>Console</span>
-        <div class="spacer"></div>
-        <label class="auto">
-          <input type="checkbox" id="autoscroll" checked /> Auto
-        </label>
-        <button id="clear" title="Clear logs">Clear</button>
-      </div>
-      <div class="logs" id="logs" role="log" aria-live="polite"></div>
-    </aside>
   </div>
   <script nonce="%NONCE%" src="%SCRIPT_URI%"></script>
 </body>

@@ -9,8 +9,10 @@
   const autoEl = document.getElementById('autoscroll');
   const panel = document.getElementById('logPanel');
   const resizer = document.getElementById('panelResizer');
+  const consoleWrap = document.getElementById('consoleWrap');
   const content = document.querySelector('.content');
   const overlay = document.getElementById('dragOverlay');
+  const btnConsole = document.getElementById('btnConsole');
 
   let vscode;
   try {
@@ -137,6 +139,16 @@
     frame.src = frame.src;
   });
 
+  // Toggle console window (resizer + panel) visibility
+  if (btnConsole && consoleWrap) {
+    btnConsole.setAttribute('aria-pressed', String(!consoleWrap.hidden));
+    btnConsole.addEventListener('click', () => {
+      const show = consoleWrap.hidden === true;
+      consoleWrap.hidden = !show;
+      btnConsole.setAttribute('aria-pressed', String(show));
+    });
+  }
+
   // Panel resize: robust with Pointer Events + overlay to avoid iframe capturing
   if (panel && resizer && content && overlay) {
     let dragging = false;
@@ -183,7 +195,13 @@
       dragging = true;
       activePointerId = e.pointerId;
       startX = e.clientX || 0;
-      startWidth = panel.getBoundingClientRect().width;
+      if (panel.hidden) {
+        panel.hidden = false; // reveal panel when starting drag
+        const inlineW = parseInt(panel.style.width || '', 10);
+        startWidth = Number.isFinite(inlineW) ? inlineW : 360;
+      } else {
+        startWidth = panel.getBoundingClientRect().width;
+      }
       document.body.classList.add('resizing');
       overlay.hidden = false; // block iframe from stealing events
       try { resizer.setPointerCapture(e.pointerId); } catch {}
@@ -198,6 +216,7 @@
 
     // Double-click to reset
     resizer.addEventListener('dblclick', () => {
+      if (panel.hidden) panel.hidden = false;
       panel.style.width = '360px';
     });
   }

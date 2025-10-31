@@ -1,6 +1,9 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
 
+let currentPanel: vscode.WebviewPanel | undefined;
+let devOutWatcher: fs.FSWatcher | undefined;
+
 export function activate(context: vscode.ExtensionContext) {
   const hello = vscode.commands.registerCommand('browser-in-vscode.helloWorld', () => {
     vscode.window.showInformationMessage('Hello World from Browser in VS Code!');
@@ -23,6 +26,13 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   const openWebview = vscode.commands.registerCommand('browser-in-vscode.openWebview', () => {
+    if (currentPanel) {
+      currentPanel.reveal(vscode.ViewColumn.Active);
+      // Ensure latest assets are loaded
+      currentPanel.webview.html = getWebviewContent(currentPanel.webview, context.extensionUri);
+      return;
+    }
+
     const panel = vscode.window.createWebviewPanel(
       'browserInVscodeWebview',
       'Browser in VS Code',
@@ -32,14 +42,42 @@ export function activate(context: vscode.ExtensionContext) {
         retainContextWhenHidden: true
       }
     );
+    currentPanel = panel;
+    panel.onDidDispose(() => { currentPanel = undefined; });
 
-    panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
+    const reload = () => {
+      panel.webview.html = getWebviewContent(panel.webview, context.extensionUri);
+    };
+
+    reload();
 
     panel.webview.onDidReceiveMessage((msg) => {
       if (msg && msg.type === 'info' && typeof msg.text === 'string') {
         vscode.window.showInformationMessage(msg.text);
       }
     });
+    // Auto-reload in development
+    if (context.extensionMode === vscode.ExtensionMode.Development) {
+      // 1) Live-reload the webview when editing media/*
+      try {
+        const mediaPath = vscode.Uri.joinPath(context.extensionUri, 'media').fsPath;
+        let timer: NodeJS.Timeout | undefined;
+        const watcher = fs.watch(mediaPath, { recursive: true }, () => {
+          if (timer) clearTimeout(timer);
+          timer = setTimeout(() => {
+            if (currentPanel) {
+              reload();
+              vscode.window.setStatusBarMessage('$(refresh) Webview reloaded (media changed)', 2000);
+            }
+          }, 100);
+        });
+        panel.onDidDispose(() => watcher.close());
+      } catch {
+        // ignore watcher errors
+      }
+
+      // window reload for out/* is handled globally in dev (see activate)
+    }
   });
 
   // Quick helper: open localhost in the Simple Browser
@@ -59,6 +97,31 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(hello, openSimpleBrowser, openWebview, openLocalhost);
+
+  // Global: in development, watch compiled output and reload the window automatically
+  if (context.extensionMode === vscode.ExtensionMode.Development) {
+    try {
+      if (!devOutWatcher) {
+        const outPath = vscode.Uri.joinPath(context.extensionUri, 'out').fsPath;
+        let reloadTimer: NodeJS.Timeout | undefined;
+        let lastReload = 0;
+        const triggerWindowReload = () => {
+          const now = Date.now();
+          if (now - lastReload < 2000) return;
+          lastReload = now;
+          vscode.window.setStatusBarMessage('$(refresh) Extension updated — reloading window…', 1500);
+          vscode.commands.executeCommand('workbench.action.reloadWindow');
+        };
+        devOutWatcher = fs.watch(outPath, { recursive: true }, () => {
+          if (reloadTimer) clearTimeout(reloadTimer);
+          reloadTimer = setTimeout(triggerWindowReload, 150);
+        });
+        context.subscriptions.push(new vscode.Disposable(() => devOutWatcher?.close()));
+      }
+    } catch {
+      // ignore watcher errors
+    }
+  }
 }
 
 export function deactivate() {}
