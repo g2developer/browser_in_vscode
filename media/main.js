@@ -153,12 +153,17 @@
 
   // Toggle mobile viewport emulation
   if (btnMobile && viewWrap) {
+    const setMobileUI = (isMobile) => {
+      btnMobile.textContent = isMobile ? '🖥PC' : '📱Mobile';
+      btnMobile.setAttribute('aria-pressed', String(isMobile));
+      viewWrap.classList.toggle('mobile', isMobile);
+    };
+
     const initMobile = viewWrap.classList.contains('mobile');
-    btnMobile.setAttribute('aria-pressed', String(initMobile));
+    setMobileUI(initMobile);
     btnMobile.addEventListener('click', () => {
       const enable = !viewWrap.classList.contains('mobile');
-      viewWrap.classList.toggle('mobile', enable);
-      btnMobile.setAttribute('aria-pressed', String(enable));
+      setMobileUI(enable);
     });
   }
 
