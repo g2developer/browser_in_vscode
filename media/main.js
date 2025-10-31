@@ -4,6 +4,8 @@
   const btnReload = document.getElementById('btnReload');
   const frame = document.getElementById('view');
   const viewWrap = document.querySelector('.view-wrap');
+  const hintEl = document.getElementById('hint');
+  const recentLinksEl = document.getElementById('recentLinks');
   const hint = document.querySelector('.hint');
   const logsEl = document.getElementById('logs');
   const clearBtn = document.getElementById('clear');
@@ -15,6 +17,8 @@
   const overlay = document.getElementById('dragOverlay');
   const btnConsole = document.getElementById('btnConsole');
   const btnMobile = document.getElementById('btnMobile');
+  const consoleGuideBanner = document.getElementById('consoleGuideBanner');
+  const consoleGuideClose = document.getElementById('consoleGuideClose');
 
   let vscode;
   try {
@@ -23,6 +27,52 @@
     vscode = acquireVsCodeApi();
   } catch (_) {
     vscode = null;
+  }
+
+  // Persisted state helpers (recents)
+  const readState = () => {
+    try { return (vscode && typeof vscode.getState === 'function') ? (vscode.getState() || null) : null; } catch { return null; }
+  };
+  const writeState = (s) => {
+    try { if (vscode && typeof vscode.setState === 'function') vscode.setState(s); } catch {}
+    try { window.localStorage.setItem('bisv_state', JSON.stringify(s)); } catch {}
+  };
+  const readFallback = () => {
+    try { const raw = window.localStorage.getItem('bisv_state'); return raw ? JSON.parse(raw) : null; } catch { return null; }
+  };
+  let state = readState() || readFallback() || { recents: [] };
+  if (!Array.isArray(state.recents)) state.recents = [];
+
+  function addRecent(url) {
+    if (!url || typeof url !== 'string') return;
+    const norm = url.trim();
+    if (!norm) return;
+    const existing = state.recents.filter((u) => u !== norm);
+    state.recents = [norm, ...existing].slice(0, 5);
+    writeState(state);
+    renderRecents();
+  }
+
+  function renderRecents() {
+    if (!recentLinksEl) return;
+    recentLinksEl.innerHTML = '';
+    (state.recents || []).forEach((u) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'recent-link';
+      b.textContent = u;
+      b.title = u;
+      b.style.padding = '4px 8px';
+      b.style.borderRadius = '4px';
+      b.style.border = '1px solid #444';
+      b.style.background = '#2b2b2b';
+      b.style.color = '#ddd';
+      b.addEventListener('click', () => {
+        input.value = u;
+        navigate(u);
+      });
+      recentLinksEl.appendChild(b);
+    });
   }
 
   // Parent helper: attachIframeConsoleRelay (API compatible with request)
@@ -122,7 +172,7 @@
     }
     frame.src = url;
     appendLog('info', [`Navigate: ${url}`], 'webview');
-    // if (hint) hint.textContent = 'Navigating: ' + url + ' (some sites block iframes)';
+    startLoadWatch(url);
   }
 
   btn.addEventListener('click', navigate);
@@ -261,7 +311,79 @@
   });
 
   frame.addEventListener('load', () => {
-    appendLog('info', [`Loaded: ${frame.src}`], 'webview');
-    // if (hint) hint.textContent = 'Loaded: ' + frame.src;
+    // Loaded event may still fire on error pages; don't hide hint solely based on this
+    addRecent(frame.src);
   });
+
+  // Hint behavior: show only if page hasn't loaded for a short time
+  let loadWatchTimer = null;
+  let currentCheckAbort = null;
+  async function checkUrlAvailability(url) {
+    try {
+      const ctrl = new AbortController();
+      currentCheckAbort = ctrl;
+      const timeout = setTimeout(() => ctrl.abort(), 3500);
+      try {
+        // Prefer HEAD; fall back to GET no-cors
+        const res = await fetch(url, { method: 'HEAD', cache: 'no-store', redirect: 'follow', signal: ctrl.signal, mode: 'no-cors' });
+        clearTimeout(timeout);
+        // Any resolved response indicates reachability (opaque allowed)
+        return true;
+      } catch {
+        clearTimeout(timeout);
+        // As a fallback, try GET no-cors
+        try {
+          const ctrl2 = new AbortController();
+          currentCheckAbort = ctrl2;
+          const t2 = setTimeout(() => ctrl2.abort(), 3500);
+          await fetch(url, { method: 'GET', cache: 'no-store', redirect: 'follow', signal: ctrl2.signal, mode: 'no-cors' });
+          clearTimeout(t2);
+          return true;
+        } catch {
+          return false;
+        }
+      }
+    } catch {
+      return false;
+    }
+  }
+
+  function startLoadWatch(url) {
+    if (!url) url = frame.getAttribute('src') || '';
+    if (loadWatchTimer) { try { clearTimeout(loadWatchTimer); } catch {} loadWatchTimer = null; }
+    // Show the overlay shortly to indicate pending state
+    loadWatchTimer = window.setTimeout(() => {
+      if (hintEl) hintEl.hidden = false;
+      renderRecents();
+    }, 800);
+    // Run availability check and hide overlay if reachable
+    checkUrlAvailability(url).then((ok) => {
+      if (ok && hintEl) hintEl.hidden = true;
+      if (!ok && hintEl) hintEl.hidden = false;
+      renderRecents();
+    });
+  }
+
+  // Initial render of recents and load watch for initial src
+  renderRecents();
+  startLoadWatch();
+
+  // Receive messages from the extension host
+  window.addEventListener('message', (ev) => {
+    const data = ev.data || {};
+    if (!data || typeof data.type !== 'string') return;
+    if (data.type === 'consoleGuide') {
+      if (consoleGuideBanner) consoleGuideBanner.hidden = false;
+    }
+  });
+
+  // Notify extension that the webview is ready to receive messages
+  try { vscode && vscode.postMessage && vscode.postMessage({ type: 'webviewReady' }); } catch {}
+
+  // Close action for console guide banner
+  if (consoleGuideClose && consoleGuideBanner) {
+    consoleGuideClose.addEventListener('click', () => {
+      consoleGuideBanner.hidden = true;
+    });
+  }
 })();
