@@ -313,11 +313,9 @@
   });
 
   frame.addEventListener('load', () => {
-    // Mark loaded for current request and hide hint to avoid flicker
+    // Mark loaded for current request; keep check running to decide hint visibility
     requestLoaded = true;
     if (loadWatchTimer) { try { clearTimeout(loadWatchTimer); } catch {} loadWatchTimer = null; }
-    try { currentCheckAbort && currentCheckAbort.abort && currentCheckAbort.abort(); } catch {}
-    if (hintEl) hintEl.hidden = true;
     addRecent(frame.src);
   });
 
@@ -370,11 +368,10 @@
       if (hintEl) hintEl.hidden = false;
       renderRecents();
     }, 800);
-    // Run availability check and update overlay only if still loading for this request
+    // Run availability check and update overlay for this request
     checkUrlAvailability(url).then((ok) => {
-      if (reqId !== currentRequestId || requestLoaded) return;
-      if (ok && hintEl) hintEl.hidden = true;
-      if (!ok && hintEl) hintEl.hidden = false;
+      if (reqId !== currentRequestId) return;
+      if (hintEl) hintEl.hidden = !!ok;
       renderRecents();
     });
   }
