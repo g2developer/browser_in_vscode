@@ -1,4 +1,4 @@
-# Browser in VS Code
+# Browser in VS Code for webview development
 
 English | [한국어](README.ko.md)
 
@@ -14,9 +14,10 @@ If you want to view console logs from the embedded page, include the script belo
 ```html
 <script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script>
 ```
-
 For npm usage and details, see:
 https://github.com/g2developer/iframe-console-relay
+
+**Caution: Include the above script only during development/debugging. It poses security risks.**
 
 ## Development
 

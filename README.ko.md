@@ -1,4 +1,4 @@
-# Browser in VS Code
+# Browser in VS Code for webview development
 
 [English](README.md) | 한국어
 
@@ -18,6 +18,8 @@
 npm 사용시 아래 사이트의 가이드를 참고하세요.
 https://github.com/g2developer/iframe-console-relay
 
+**주의: 반드시 개발/디버그 시에만 위 스크립트를 넣으세요. 보안상의 위험이 있습니다.**
+
 ## 개발
 
 1. 의존성 설치: `npm install`
@@ -32,4 +34,3 @@ https://github.com/g2developer/iframe-console-relay
 ### 빌드/설치 스크립트
 - `npm run build`: TypeScript 컴파일 후 VSIX 생성
 - `npm run build:install`: VSIX 생성 후 바로 VS Code에 설치(`--force` 재설치) 혹은 빌드 browser-in-vscode.vsix로 직접설치
-
