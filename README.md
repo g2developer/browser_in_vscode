@@ -19,6 +19,13 @@ https://github.com/g2developer/iframe-console-relay
 
 **Caution: Include the above script only during development/debugging. It poses security risks.**
 
+## Demo
+
+![Demo: Browser in VS Code](images/demo.gif)
+This video is a demo of editing a page using Browser in VSCode and an AI agent.
+Environment: React, Vite, Codex (AI Agent).
+(The segments showing the AI agent working have been removed for time constraints.)
+
 ## Development
 
 1. Install dependencies: `npm install`
@@ -33,3 +40,12 @@ Development conveniences:
 ### Build/Install scripts
 - `npm run build`: compile TypeScript and create a VSIX
 - `npm run build:install`: create a VSIX and install to VS Code (`--force` to reinstall), or manually install the built `browser-in-vscode.vsix`
+
+
+## 💰 Support & Donation
+
+🍪 Buy the Developer a Little Treat
+If you find this project helpful, consider buying the developer a snack — even a small treat keeps the energy (and code) flowing!
+
+- [Donate via PayPal](https://buymeacoffee.com/gyu2036)
+- [Donate via Buy Me a Coffee](https://buymeacoffee.com/gyu2036)

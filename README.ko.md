@@ -20,6 +20,13 @@ https://github.com/g2developer/iframe-console-relay
 
 **주의: 반드시 개발/디버그 시에만 위 스크립트를 넣으세요. 보안상의 위험이 있습니다.**
 
+## 데모
+
+![데모: VS Code 내 브라우저](images/demo.gif)
+이 영상은 Browser in VSCode와 AI에이전트를 활용해 페이지를 수정하는 데모입니다.
+구동환경: React, Vite, Codex(AI에이전트)
+(시간관계상 AI에이전트가 작업하고 있는 시간을 삭제했습니다.)
+
 ## 개발
 
 1. 의존성 설치: `npm install`
@@ -34,3 +41,13 @@ https://github.com/g2developer/iframe-console-relay
 ### 빌드/설치 스크립트
 - `npm run build`: TypeScript 컴파일 후 VSIX 생성
 - `npm run build:install`: VSIX 생성 후 바로 VS Code에 설치(`--force` 재설치) 혹은 빌드 browser-in-vscode.vsix로 직접설치
+
+
+
+## 💰 후원
+
+개발자에게 과자 한봉지 사주기
+이 프로젝트가 유용하다면 과자 한봉지 값으로 개발자를 후원해 주세요! 여러분의 작은 후원은 지속적인 개발에 큰 힘이 됩니다.
+
+- [PayPal로 후원하기](https://buymeacoffee.com/gyu2036)
+- [Buy Me a Coffee로 후원하기](https://buymeacoffee.com/gyu2036)
