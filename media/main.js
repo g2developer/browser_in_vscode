@@ -141,6 +141,16 @@
     frame.src = frame.src;
   });
 
+  // Keyboard: F5 reloads the embedded browser (iframe), not VS Code
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'F5') {
+      e.preventDefault();
+      e.stopPropagation();
+      frame.src = frame.src;
+      appendLog('info', ['Reload (F5)'], 'webview');
+    }
+  }, true);
+
   // Toggle console window (resizer + panel) visibility
   if (btnConsole && consoleWrap) {
     btnConsole.setAttribute('aria-pressed', String(!consoleWrap.hidden));
