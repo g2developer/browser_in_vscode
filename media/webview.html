@@ -12,23 +12,18 @@
 </head>
 <body>
   <div class="bar">
-    <button id="btnReload">🔄</button>
+    <button id="btnReload" data-i18n="reload">Reload</button>
     <input id="addr" type="text" value="http://localhost:5173/" />
-    <button id="go">Go</button>
-    <button id="btnMobile" aria-pressed="false">📱Mobile</button>
-    <button id="btnConsole">💬Console</button>
+    <button id="go" data-i18n="go">Go</button>
+    <button id="btnMobile" aria-pressed="false" data-i18n="toggleMobile">Mobile</button>
+    <button id="btnConsole" data-i18n="console">Console</button>
   </div>
   <div class="content">
     <div class="view-wrap">
       <div class="hint" id="hint" hidden>
-        <div id="hintContent">
-          이 Extension은 localhost같은 페이지의 개발과 디버깅을 위해서 만들어졌습니다.<br/>
-          외부페이지는 표지되지 않을 수 있습니다.<br/><br/>
-          페이지가 표시되지 않는 경우 대상 사이트가 iframe 임베드를 차단했을 수 있습니다.<br/>
-          주소를 확인하거나 로컬 개발 서버를 사용해 보세요.<br/>
-        </div>
+        <div id="hintContent" data-i18n-html="hintHtml"></div>
         <div id="recentWrap" style="margin-top:8px;">
-          <strong>최근 접속한 링크</strong>
+          <strong data-i18n="recentLinks">Recent links</strong>
           <div id="recentLinks" style="margin-top:4px; display:flex; gap:6px; flex-wrap:wrap;"></div>
         </div>
       </div>
@@ -38,27 +33,118 @@
       <div class="panel-resizer" id="panelResizer" aria-hidden="true"></div>
       <aside class="panel" id="logPanel" aria-label="Logs">
         <div class="panel-header">
-          <span>Console</span>
+          <span data-i18n="console">Console</span>
           <div class="spacer"></div>
           <label class="auto">
-            <input type="checkbox" id="autoscroll" checked /> Auto
+            <input type="checkbox" id="autoscroll" checked /> <span data-i18n="auto">Auto</span>
           </label>
-          <button id="clear" title="Clear logs">Clear</button>
+          <button id="clear" title="Clear logs" data-i18n-title="clearTitle" data-i18n="clear">Clear</button>
         </div>
         <div class="logs" id="logs" role="log" aria-live="polite">
-          <div class="notice" id="consoleGuideBanner" role="note">
-            <div class="notice-content">
-              콘솔 안내: iframe 페이지에서 로그를 받으려면 index.html에 다음 스크립트를 포함하세요.
-              <pre><code>&lt;script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"&gt;&lt;/script&gt;</code></pre>
-              npm 사용 시: <a href="https://github.com/g2developer/iframe-console-relay" target="_blank" rel="noreferrer">g2developer/iframe-console-relay</a>
-            </div>
-            <a id="consoleGuideClose" href="javascript:void()" title="close" aria-label="close">Close</a>
+          <div class="notice" id="consoleGuideBanner" role="note" hidden>
+            <div class="notice-content" data-i18n-html="consoleGuideHtml"></div><br/>
+            <a id="consoleGuideClose" href="javascript:void()" title="close" aria-label="close" data-i18n="close">Close</a>
           </div>
         </div>
       </aside>
     </div>
     <div class="drag-overlay" id="dragOverlay" hidden aria-hidden="true"></div>
   </div>
+
+  <!-- Lightweight i18n for EN/KR -->
+  <script nonce="%NONCE%">
+    (function(){
+      const messages = {
+        en: {
+          reload: 'Reload',
+          go: 'Go',
+          toggleMobile: 'Mobile',
+          togglePC: 'PC',
+          console: 'Console',
+          auto: 'Auto',
+          clear: 'Clear',
+          clearTitle: 'Clear logs',
+          close: 'Close',
+          recentLinks: 'Recent links',
+          hintHtml:
+            'This extension is made for developing and debugging pages like localhost.<br/>' +
+            'Some sites may block loading inside an iframe.<br/>' +
+            'Try entering your local dev server in the address bar.',
+          consoleGuideHtml:
+            'Console guide: To receive logs from an iframe page, include this script in your index.html:<br/>' +
+            '<pre><code>&lt;script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"&gt;&lt;/script&gt;</code></pre>' +
+            'For npm usage see <a href="https://github.com/g2developer/iframe-console-relay" target="_blank" rel="noreferrer">g2developer/iframe-console-relay</a>'
+        },
+        ko: {
+          reload: '새로고침',
+          go: '이동',
+          toggleMobile: '모바일',
+          togglePC: 'PC',
+          console: '콘솔',
+          auto: '자동',
+          clear: '지우기',
+          clearTitle: '로그 지우기',
+          close: '닫기',
+          recentLinks: '최근 접속 링크',
+          hintHtml:
+            '이 확장 기능은 localhost 같은 페이지의 개발과 디버깅을 위해 만들어졌습니다.<br/>' +
+            '일부 사이트는 iframe에서 열기를 차단할 수 있습니다.<br/>' +
+            '주소창에 로컬 개발 서버를 입력해 보세요.',
+          consoleGuideHtml:
+            '콘솔 안내: iframe 페이지에서 로그를 받으려면 index.html에 다음 스크립트를 포함하세요:<br/>' +
+            '<pre><code>&lt;script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"&gt;&lt;/script&gt;</code></pre>' +
+            'npm 사용 시 <a href="https://github.com/g2developer/iframe-console-relay" target="_blank" rel="noreferrer">g2developer/iframe-console-relay</a>를 참고하세요'
+        }
+      };
+
+      const detectLang = () => {
+        const nav = (navigator.language || navigator.userLanguage || 'en').toLowerCase();
+        return nav.startsWith('ko') ? 'ko' : 'en';
+      };
+
+      const lang = detectLang();
+      const dict = messages[lang] || messages.en;
+      try { document.documentElement.lang = lang; } catch {}
+
+      function t(key){ return (dict && key in dict) ? dict[key] : key; }
+
+      // Expose for main.js toggle text
+      window.BISV_I18N = { t, lang };
+
+      // Keep Mobile/PC toggle label localized even when main.js updates it
+      try {
+        const mobileBtn = document.getElementById('btnMobile');
+        if (mobileBtn) {
+          const sync = () => {
+            const pressed = mobileBtn.getAttribute('aria-pressed') === 'true';
+            mobileBtn.textContent = pressed ? t('togglePC') : t('toggleMobile');
+          };
+          sync();
+          const mo = new MutationObserver(sync);
+          mo.observe(mobileBtn, { attributes: true, attributeFilter: ['aria-pressed'] });
+        }
+      } catch {}
+
+      // Apply textContent translations
+      document.querySelectorAll('[data-i18n]').forEach((el) => {
+        const k = el.getAttribute('data-i18n');
+        if (k) el.textContent = t(k);
+      });
+
+      // Apply title translations
+      document.querySelectorAll('[data-i18n-title]').forEach((el) => {
+        const k = el.getAttribute('data-i18n-title');
+        if (k) el.setAttribute('title', t(k));
+      });
+
+      // Apply innerHTML translations where needed
+      document.querySelectorAll('[data-i18n-html]').forEach((el) => {
+        const k = el.getAttribute('data-i18n-html');
+        if (k) el.innerHTML = t(k);
+      });
+    })();
+  </script>
+
   <script nonce="%NONCE%" src="%SCRIPT_URI%"></script>
 </body>
 </html>

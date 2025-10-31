@@ -55,10 +55,10 @@ export function activate(context: vscode.ExtensionContext) {
       if (msg && msg.type === 'info' && typeof msg.text === 'string') {
         vscode.window.showInformationMessage(msg.text);
       }
-      // if (msg && msg.type === 'webviewReady') {
-      //   // Send console guidance into the webview log panel
-      //   try { panel.webview.postMessage({ type: 'consoleGuide' }); } catch {}
-      // }
+      if (msg && msg.type === 'webviewReady') {
+        // Send console guidance into the webview log panel
+        try { panel.webview.postMessage({ type: 'consoleGuide' }); } catch {}
+      }
       // vscode.window.showInformationMessage(
       //     'Console 안내: 페이지에서 로그를 받으려면 index.html에 다음 스크립트를 포함하세요.\n' +
       //     '<script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script>' + 
