@@ -71,7 +71,8 @@
             'Some sites may block loading inside an iframe.<br/>' +
             'Try entering your local dev server in the address bar.',
           consoleGuideHtml:
-            'Console guide: To receive logs from an iframe page, include this script in your index.html:<br/>' +
+            'Console guide: To receive logs from an page, include this script in your index.html:<br/>' +
+            '<span style="color:red">Warning: This script may pose a security risk. Add it only when debugging the page.</span><br/>' + 
             '<pre><code>&lt;script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"&gt;&lt;/script&gt;</code></pre>' +
             'For npm usage see <a href="https://github.com/g2developer/iframe-console-relay" target="_blank" rel="noreferrer">g2developer/iframe-console-relay</a>'
         },
@@ -91,7 +92,8 @@
             '일부 사이트는 iframe에서 열기를 차단할 수 있습니다.<br/>' +
             '주소창에 로컬 개발 서버를 입력해 보세요.',
           consoleGuideHtml:
-            '콘솔 안내: iframe 페이지에서 로그를 받으려면 index.html에 다음 스크립트를 포함하세요:<br/>' +
+            '콘솔 안내: 페이지에서 로그를 받으려면 index.html에 다음 스크립트를 포함하세요:<br/>' +
+            '<span style="color:red">주의: 보안의 위험이 있으니 아래 script는 페이지를 디버그할때만 추가하세요. </span><br/>' +
             '<pre><code>&lt;script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"&gt;&lt;/script&gt;</code></pre>' +
             'npm 사용 시 <a href="https://github.com/g2developer/iframe-console-relay" target="_blank" rel="noreferrer">g2developer/iframe-console-relay</a>를 참고하세요'
         }

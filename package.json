@@ -1,7 +1,7 @@
 {
   "name": "browser-in-vscode",
   "displayName": "Browser in VS Code",
-  "description": "A starter VS Code extension with a Hello World command and a sample webview panel.",
+  "description": "A browser for webview development inside VS Code.",
   "version": "0.0.1",
   "publisher": "g2developer",
   "license": "MIT",
@@ -16,29 +16,14 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:browser-in-vscode.helloWorld",
-    "onCommand:browser-in-vscode.openWebview",
-    "onCommand:browser-in-vscode.openSimpleBrowser",
-    "onCommand:browser-in-vscode.openLocalhost"
+    "onCommand:browser-in-vscode.openWebview"
   ],
   "main": "./out/extension.js",
   "contributes": {
     "commands": [
       {
-        "command": "browser-in-vscode.helloWorld",
-        "title": "Browser in VS Code: Hello World"
-      },
-      {
         "command": "browser-in-vscode.openWebview",
         "title": "Browser in VS Code: Open Webview"
-      },
-      {
-        "command": "browser-in-vscode.openSimpleBrowser",
-        "title": "Browser in VS Code: Open Simple Browser"
-      },
-      {
-        "command": "browser-in-vscode.openLocalhost",
-        "title": "Browser in VS Code: Open Localhost"
       }
     ]
   },
