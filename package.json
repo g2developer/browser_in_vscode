@@ -3,11 +3,11 @@
   "displayName": "Browser in VS Code",
   "description": "A starter VS Code extension with a Hello World command and a sample webview panel.",
   "version": "0.0.1",
-  "publisher": "your-name",
+  "publisher": "g2developer",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/your-name/browser-in-vscode.git"
+    "url": "https://github.com/g2developer/browser_in_vscode"
   },
   "engines": {
     "vscode": "^1.90.0"
