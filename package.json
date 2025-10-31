@@ -3,7 +3,7 @@
   "displayName": "Browser in VS Code",
   "description": "A browser for webview development inside VS Code.",
   "version": "0.0.1",
-  "publisher": "g2developer",
+  "publisher": "gyu",
   "license": "MIT",
   "repository": {
     "type": "git",
