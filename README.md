@@ -11,7 +11,9 @@ This extension lets you open and debug URLs (e.g., localhost) inside a VS Code W
 Note: Many websites block iframe embedding via security policies (CSP / X-Frame-Options). Some URLs may not load inside the webview.
 
 If you want to view console logs from the embedded page, include the script below in your `index.html`:
-<code><script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script></code>
+```html
+<script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script>
+```
 
 For npm usage and details, see:
 https://github.com/g2developer/iframe-console-relay

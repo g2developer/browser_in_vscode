@@ -11,7 +11,9 @@
 참고: 많은 웹사이트가 보안 정책(CSP/X-Frame-Options)으로 iframe 임베드를 막습니다. 일부 주소는 로드되지 않을 수 있습니다.
 
 콘솔을 이용할 경우 index.html 파일내 다음 스크립트를 포함하세요.
-<code><script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script></code>
+```html
+<script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script>
+```
 
 npm 사용시 아래 사이트의 가이드를 참고하세요.
 https://github.com/g2developer/iframe-console-relay
