@@ -129,25 +129,29 @@
 
   function appendLog(level, args, origin) {
     if (!logsEl) return;
-    const ts = new Date();
-    const time = ts.toLocaleTimeString();
     const item = document.createElement('div');
     item.className = `log ${level || 'log'}`;
-    const meta = document.createElement('span');
-    meta.className = 'meta';
-    meta.textContent = `[${time}]${origin ? ` [${origin}]` : ''} ${level || 'log'}:`;
+
+    // Original meta/timestamp/origin formatting (commented as requested)
+    // const ts = new Date();
+    // const time = ts.toLocaleTimeString();
+    // const meta = document.createElement('span');
+    // meta.className = 'meta';
+    // meta.textContent = `[${time}]${origin ? ` [${origin}]` : ''} ${level || 'log'}:`;
+
     const msg = document.createElement('span');
     try {
-      // stringify each arg safely
+      // stringify each arg safely, but render only the message text
       const texts = (args || []).map((a) => {
         if (typeof a === 'string') return a;
         try { return JSON.stringify(a); } catch { return String(a); }
       });
-      msg.textContent = ' ' + texts.join(' ');
+      msg.textContent = texts.join(' ');
     } catch {
       msg.textContent = '';
     }
-    item.appendChild(meta);
+
+    // item.appendChild(meta); // comment out meta to show only message
     item.appendChild(msg);
     logsEl.appendChild(item);
     if (autoEl && autoEl.checked) {
