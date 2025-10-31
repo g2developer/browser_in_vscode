@@ -3,6 +3,7 @@
   const btn = document.getElementById('go');
   const btnReload = document.getElementById('btnReload');
   const frame = document.getElementById('view');
+  const viewWrap = document.querySelector('.view-wrap');
   const hint = document.querySelector('.hint');
   const logsEl = document.getElementById('logs');
   const clearBtn = document.getElementById('clear');
@@ -13,6 +14,7 @@
   const content = document.querySelector('.content');
   const overlay = document.getElementById('dragOverlay');
   const btnConsole = document.getElementById('btnConsole');
+  const btnMobile = document.getElementById('btnMobile');
 
   let vscode;
   try {
@@ -146,6 +148,17 @@
       const show = consoleWrap.hidden === true;
       consoleWrap.hidden = !show;
       btnConsole.setAttribute('aria-pressed', String(show));
+    });
+  }
+
+  // Toggle mobile viewport emulation
+  if (btnMobile && viewWrap) {
+    const initMobile = viewWrap.classList.contains('mobile');
+    btnMobile.setAttribute('aria-pressed', String(initMobile));
+    btnMobile.addEventListener('click', () => {
+      const enable = !viewWrap.classList.contains('mobile');
+      viewWrap.classList.toggle('mobile', enable);
+      btnMobile.setAttribute('aria-pressed', String(enable));
     });
   }
 
