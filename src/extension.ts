@@ -25,23 +25,7 @@ export function activate(context: vscode.ExtensionContext) {
     await vscode.commands.executeCommand('simpleBrowser.show', finalUrl);
   });
 
-  const openWebview = vscode.commands.registerCommand('browser-in-vscode.openWebview', () => {
-    if (currentPanel) {
-      currentPanel.reveal(vscode.ViewColumn.Active);
-      // Ensure latest assets are loaded
-      currentPanel.webview.html = getWebviewContent(currentPanel.webview, context.extensionUri);
-      return;
-    }
-
-    const panel = vscode.window.createWebviewPanel(
-      'browserInVscodeWebview',
-      'Browser in VS Code',
-      vscode.ViewColumn.Active,
-      {
-        enableScripts: true,
-        retainContextWhenHidden: true
-      }
-    );
+  const initPanel = (panel: vscode.WebviewPanel) => {
     currentPanel = panel;
     panel.onDidDispose(() => { currentPanel = undefined; });
 
@@ -56,21 +40,12 @@ export function activate(context: vscode.ExtensionContext) {
         vscode.window.showInformationMessage(msg.text);
       }
       if (msg && msg.type === 'webviewReady') {
-        // Send console guidance into the webview log panel
         try { panel.webview.postMessage({ type: 'consoleGuide' }); } catch {}
       }
-      // vscode.window.showInformationMessage(
-      //     'Console 안내: 페이지에서 로그를 받으려면 index.html에 다음 스크립트를 포함하세요.\n' +
-      //     '<script src="https://unpkg.com/iframe-console-relay/dist/index.umd.min.js"></script>' + 
-      //     'npm install의 경우 아래 github의 정보를 참고하세요.\n' + 
-      //     'https://github.com/g2developer/iframe-console-relay'
-      //   );
-        
-
     });
+
     // Auto-reload in development
     if (context.extensionMode === vscode.ExtensionMode.Development) {
-      // 1) Live-reload the webview when editing media/*
       try {
         const mediaPath = vscode.Uri.joinPath(context.extensionUri, 'media').fsPath;
         let timer: NodeJS.Timeout | undefined;
@@ -87,9 +62,26 @@ export function activate(context: vscode.ExtensionContext) {
       } catch {
         // ignore watcher errors
       }
-
-      // window reload for out/* is handled globally in dev (see activate)
     }
+  };
+
+  const openWebview = vscode.commands.registerCommand('browser-in-vscode.openWebview', () => {
+    if (currentPanel) {
+      currentPanel.reveal(vscode.ViewColumn.Active);
+      currentPanel.webview.html = getWebviewContent(currentPanel.webview, context.extensionUri);
+      return;
+    }
+
+    const panel = vscode.window.createWebviewPanel(
+      'browserInVscodeWebview',
+      'Browser in VS Code',
+      vscode.ViewColumn.Active,
+      {
+        enableScripts: true,
+        retainContextWhenHidden: true
+      }
+    );
+    initPanel(panel);
   });
 
   // Quick helper: open localhost in the Simple Browser
@@ -109,6 +101,20 @@ export function activate(context: vscode.ExtensionContext) {
   });
 
   context.subscriptions.push(hello, openSimpleBrowser, openWebview, openLocalhost);
+
+  // Restore webview after window reloads/restarts
+  try {
+    const serializer = vscode.window.registerWebviewPanelSerializer('browserInVscodeWebview', {
+      async deserializeWebviewPanel(panel: vscode.WebviewPanel) {
+        panel.webview.options = { enableScripts: true };
+        panel.title = 'Browser in VS Code';
+        initPanel(panel);
+      }
+    });
+    context.subscriptions.push(serializer);
+  } catch {
+    // older VS Code versions may not support serializer
+  }
 
   // Global: in development, watch compiled output and reload the window automatically
   if (context.extensionMode === vscode.ExtensionMode.Development) {

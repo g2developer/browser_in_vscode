@@ -16,7 +16,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:browser-in-vscode.openWebview"
+    "onCommand:browser-in-vscode.openWebview",
+    "onWebviewPanel:browserInVscodeWebview"
   ],
   "main": "./out/extension.js",
   "contributes": {
