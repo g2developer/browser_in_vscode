@@ -170,9 +170,9 @@
     if (!/^https?:\/\//i.test(url)) {
       url = 'https://' + url;
     }
+    startLoadWatch(url);
     frame.src = url;
     appendLog('info', [`Navigate: ${url}`], 'webview');
-    startLoadWatch(url);
   }
 
   btn.addEventListener('click', navigate);
@@ -188,7 +188,9 @@
   });
 
   btnReload.addEventListener('click', () => {
-    frame.src = frame.src;
+    const url = frame.src;
+    startLoadWatch(url);
+    frame.src = url;
   });
 
   // Keyboard: F5 reloads the embedded browser (iframe), not VS Code
@@ -311,13 +313,19 @@
   });
 
   frame.addEventListener('load', () => {
-    // Loaded event may still fire on error pages; don't hide hint solely based on this
+    // Mark loaded for current request and hide hint to avoid flicker
+    requestLoaded = true;
+    if (loadWatchTimer) { try { clearTimeout(loadWatchTimer); } catch {} loadWatchTimer = null; }
+    try { currentCheckAbort && currentCheckAbort.abort && currentCheckAbort.abort(); } catch {}
+    if (hintEl) hintEl.hidden = true;
     addRecent(frame.src);
   });
 
   // Hint behavior: show only if page hasn't loaded for a short time
   let loadWatchTimer = null;
   let currentCheckAbort = null;
+  let currentRequestId = 0;
+  let requestLoaded = false;
   async function checkUrlAvailability(url) {
     try {
       const ctrl = new AbortController();
@@ -350,14 +358,21 @@
 
   function startLoadWatch(url) {
     if (!url) url = frame.getAttribute('src') || '';
+    // Bump request id and reset loading state
+    currentRequestId++;
+    const reqId = currentRequestId;
+    requestLoaded = false;
     if (loadWatchTimer) { try { clearTimeout(loadWatchTimer); } catch {} loadWatchTimer = null; }
-    // Show the overlay shortly to indicate pending state
+    try { currentCheckAbort && currentCheckAbort.abort && currentCheckAbort.abort(); } catch {}
+    // Show the overlay only if we're still loading after a short delay
     loadWatchTimer = window.setTimeout(() => {
+      if (reqId !== currentRequestId || requestLoaded) return;
       if (hintEl) hintEl.hidden = false;
       renderRecents();
     }, 800);
-    // Run availability check and hide overlay if reachable
+    // Run availability check and update overlay only if still loading for this request
     checkUrlAvailability(url).then((ok) => {
+      if (reqId !== currentRequestId || requestLoaded) return;
       if (ok && hintEl) hintEl.hidden = true;
       if (!ok && hintEl) hintEl.hidden = false;
       renderRecents();
