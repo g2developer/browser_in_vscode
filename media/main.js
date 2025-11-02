@@ -127,37 +127,30 @@
     return () => window.removeEventListener('message', handler);
   }
 
-  function appendLog(level, args, origin) {
-    if (!logsEl) return;
-    const item = document.createElement('div');
-    item.className = `log ${level || 'log'}`;
-
-    // Original meta/timestamp/origin formatting (commented as requested)
-    // const ts = new Date();
-    // const time = ts.toLocaleTimeString();
-    // const meta = document.createElement('span');
-    // meta.className = 'meta';
-    // meta.textContent = `[${time}]${origin ? ` [${origin}]` : ''} ${level || 'log'}:`;
-
-    const msg = document.createElement('span');
-    try {
-      // stringify each arg safely, but render only the message text
-      const texts = (args || []).map((a) => {
-        if (typeof a === 'string') return a;
-        try { return JSON.stringify(a); } catch { return String(a); }
-      });
-      msg.textContent = texts.join(' ');
-    } catch {
-      msg.textContent = '';
-    }
-
-    // item.appendChild(meta); // comment out meta to show only message
-    item.appendChild(msg);
-    logsEl.appendChild(item);
-    if (autoEl && autoEl.checked) {
-      item.scrollIntoView({ block: 'nearest' });
-    }
-  }
+  // Use ConsoleUtil from consoleUtil.js
+  const appendLog = window.ConsoleUtil && window.ConsoleUtil.createLogAppender
+    ? window.ConsoleUtil.createLogAppender(logsEl, autoEl)
+    : function(level, args, origin) {
+        // Fallback if ConsoleUtil is not available
+        if (!logsEl) return;
+        const item = document.createElement('div');
+        item.className = `log ${level || 'log'}`;
+        const msg = document.createElement('span');
+        try {
+          const texts = (args || []).map((a) => {
+            if (typeof a === 'string') return a;
+            try { return JSON.stringify(a); } catch { return String(a); }
+          });
+          msg.textContent = texts.join(' ');
+        } catch {
+          msg.textContent = '';
+        }
+        item.appendChild(msg);
+        logsEl.appendChild(item);
+        if (autoEl && autoEl.checked) {
+          item.scrollIntoView({ block: 'nearest' });
+        }
+      };
 
   // Mirror webview's own console into the panel (optional helper)
   ['log', 'info', 'warn', 'error'].forEach((level) => {

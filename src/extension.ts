@@ -147,10 +147,12 @@ export function deactivate() {}
 function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): string {
   const nonce = getNonce();
   const scriptUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'main.js'));
+  const utilUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'consoleUtil.js'));
   const styleUri = webview.asWebviewUri(vscode.Uri.joinPath(extensionUri, 'media', 'style.css'));
   // Add a simple cache-buster so local resource edits reflect immediately in the webview
   const cacheBust = Date.now().toString();
   const scriptUriBusted = scriptUri.with({ query: cacheBust });
+  const utilUriBusted = utilUri.with({ query: cacheBust });
   const styleUriBusted = styleUri.with({ query: cacheBust });
   const htmlUri = vscode.Uri.joinPath(extensionUri, 'media', 'webview.html');
 
@@ -159,6 +161,7 @@ function getWebviewContent(webview: vscode.Webview, extensionUri: vscode.Uri): s
     .replace(/%CSP_SOURCE%/g, webview.cspSource)
     .replace(/%NONCE%/g, nonce)
     .replace(/%SCRIPT_URI%/g, String(scriptUriBusted))
+    .replace(/%UTIL_URI%/g, String(utilUriBusted))
     .replace(/%STYLE_URI%/g, String(styleUriBusted));
 }
 
