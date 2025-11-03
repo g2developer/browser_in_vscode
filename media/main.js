@@ -314,6 +314,8 @@
     requestLoaded = true;
     if (loadWatchTimer) { try { clearTimeout(loadWatchTimer); } catch {} loadWatchTimer = null; }
     addRecent(frame.src);
+    // Ensure any hint/guide overlay is removed once content loads
+    if (hintEl) hintEl.hidden = true;
   });
 
   // Hint behavior: show only if page hasn't loaded for a short time
@@ -359,6 +361,8 @@
     requestLoaded = false;
     if (loadWatchTimer) { try { clearTimeout(loadWatchTimer); } catch {} loadWatchTimer = null; }
     try { currentCheckAbort && currentCheckAbort.abort && currentCheckAbort.abort(); } catch {}
+    // Hide hint immediately at navigation start; it will reappear if slow/unreachable
+    if (hintEl) hintEl.hidden = true;
     // Show the overlay only if we're still loading after a short delay
     loadWatchTimer = window.setTimeout(() => {
       if (reqId !== currentRequestId || requestLoaded) return;
