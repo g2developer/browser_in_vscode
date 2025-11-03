@@ -103,8 +103,21 @@
           }
         };
         
+        // Make the entire header clickable to toggle
+        header.style.cursor = 'pointer';
         expander.addEventListener('click', toggleExpand);
         preview.addEventListener('click', toggleExpand);
+        keySpan.addEventListener('click', toggleExpand);
+        header.addEventListener('click', toggleExpand);
+
+        // Basic keyboard accessibility on header
+        header.setAttribute('tabindex', '0');
+        header.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            toggleExpand(e);
+          }
+        });
       }
       
       container.appendChild(header);
