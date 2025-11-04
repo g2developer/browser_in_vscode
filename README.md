@@ -47,5 +47,5 @@ Development conveniences:
 🍪 Buy the Developer a Little Treat
 If you find this project helpful, consider buying the developer a snack — even a small treat keeps the energy (and code) flowing!
 
-- [Donate via PayPal](https://buymeacoffee.com/gyu2036)
+- [Donate via PayPal](https://paypal.me/gyu8648)
 - [Donate via Buy Me a Coffee](https://buymeacoffee.com/gyu2036)

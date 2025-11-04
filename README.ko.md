@@ -49,5 +49,5 @@ https://github.com/g2developer/iframe-console-relay
 개발자에게 과자 한봉지 사주기
 이 프로젝트가 유용하다면 과자 한봉지 값으로 개발자를 후원해 주세요! 여러분의 작은 후원은 지속적인 개발에 큰 힘이 됩니다.
 
-- [PayPal로 후원하기](https://buymeacoffee.com/gyu2036)
+- [PayPal로 후원하기](https://paypal.me/gyu8648)
 - [Buy Me a Coffee로 후원하기](https://buymeacoffee.com/gyu2036)
