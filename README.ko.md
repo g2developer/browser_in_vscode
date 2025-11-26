@@ -43,6 +43,14 @@ https://github.com/g2developer/iframe-console-relay
 - `npm run build:install`: VSIX 생성 후 바로 VS Code에 설치(`--force` 재설치) 혹은 빌드 browser-in-vscode.vsix로 직접설치
 
 
+## 문제 해결
+
+VS Code에서 PWA 서비스 워커가 지워지지 않을 때는 VS Code를 종료한 뒤 아래 폴더를 강제로 삭제하세요(Windows):
+- `C:\Users\<username>\AppData\Roaming\Code\Service Worker`
+- `C:\Users\<username>\AppData\Roaming\Code\Cache`
+- `C:\Users\<username>\AppData\Roaming\Code\GPUCache`
+- `C:\Users\<username>\AppData\Roaming\Code\User\workspaceStorage`
+
 
 ## 💰 후원
 

@@ -42,6 +42,15 @@ Development conveniences:
 - `npm run build:install`: create a VSIX and install to VS Code (`--force` to reinstall), or manually install the built `browser-in-vscode.vsix`
 
 
+## Troubleshooting
+
+If a PWA service worker in VS Code refuses to clear, close VS Code and force-delete these folders (Windows):
+- `C:\Users\<username>\AppData\Roaming\Code\Service Worker`
+- `C:\Users\<username>\AppData\Roaming\Code\Cache`
+- `C:\Users\<username>\AppData\Roaming\Code\GPUCache`
+- `C:\Users\<username>\AppData\Roaming\Code\User\workspaceStorage`
+
+
 ## 💰 Support & Donation
 
 🍪 Buy the Developer a Little Treat
